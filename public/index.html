@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Form</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Payment Form</h2>
+      <form id="paymentForm">
+        <div class="form-group">
+          <label for="amount">Price (amount)</label>
+          <input
+            type="text"
+            class="form-control"
+            id="amount"
+            name="amount"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <select class="form-control" id="currency" name="currency">
+            <option>USD</option>
+            <option>EUR</option>
+            <option>THB</option>
+            <option>HKD</option>
+            <option>SGD</option>
+            <option>AUD</option>
+          </select>
+        </div>
+        <h3>Payment Information</h3>
+        <div class="form-group">
+          <label for="creditCardHolderName">Credit Card Holder Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="creditCardHolderName"
+            name="creditCardHolderName"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="creditCardNumber">Credit Card Number</label>
+          <input
+            type="text"
+            class="form-control"
+            id="creditCardNumber"
+            name="creditCardNumber"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="creditCardExpiration">Credit Card Expiration</label>
+          <input
+            type="month"
+            class="form-control"
+            id="creditCardExpiration"
+            name="creditCardExpiration"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="creditCardCCV">Credit Card CCV</label>
+          <input
+            type="text"
+            class="form-control"
+            id="creditCardCCV"
+            name="creditCardCCV"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <div id="paymentResult"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $("#paymentForm").submit(function (e) {
+          e.preventDefault();
+          const formData = {
+            amount: parseFloat($("#amount").val()),
+            currency: $("#currency").val(),
+            creditCard: {
+              number: $("#creditCardNumber").val(),
+              expirationYear: $("#creditCardExpiration").val().split("-")[0],
+              expirationMonth: $("#creditCardExpiration").val().split("-")[1],
+              cvv: $("#creditCardCCV").val(),
+              cardholderName: $("#creditCardHolderName").val(),
+            },
+          };
+          $.ajax({
+            type: "POST",
+            url: "/make-payment",
+            data: JSON.stringify(formData),
+            contentType: "application/json",
+            success: function (response) {
+              if (
+                response.success &&
+                response.orderId &&
+                response.redirectUrl
+              ) {
+                window.location.href = response.redirectUrl;
+              } else {
+                $("#paymentResult").html(
+                  '<p class="text-success">Payment Successful!</p>'
+                );
+              }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+              $("#paymentResult").html(
+                '<p class="text-danger">Payment Failed: ' +
+                  errorThrown +
+                  ". Please try again.</p>"
+              );
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
