@@ -1,9 +1,9 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const routes = require("./routes/index");
+import express from "express";
+import bodyParser from "body-parser";
+import routes from "./routes/index";
 
-const app = express();
-const PORT = 3000;
+const app: express.Application = express();
+const PORT: number = 3000;
 
 app.use(express.static("public"));
 

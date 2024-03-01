@@ -1,6 +1,17 @@
-const { dbRun } = require("./sqliteConfig");
+import { dbRun } from "./sqliteConfig";
 
-exports.savePaymentToDb = async (data) => {
+interface PaymentData {
+  customerName: string;
+  amount: string;
+  currency: string;
+  creditCardNumber: string;
+  paymentGateway: string;
+  success: boolean;
+  transactionId?: string;
+  message?: string;
+}
+
+export const savePaymentToDb = async (data: PaymentData): Promise<void> => {
   const {
     customerName,
     amount,

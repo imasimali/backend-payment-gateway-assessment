@@ -1,16 +1,21 @@
-const checkoutNodeJssdk = require("@paypal/checkout-server-sdk");
+import * as checkoutNodeJssdk from "@paypal/checkout-server-sdk";
+import { CreditCard } from "./paymentService";
 
-function environment() {
-  let clientId = process.env.PAYPAL_CLIENT_ID;
-  let clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+const environment = () => {
+  const clientId = process.env.PAYPAL_CLIENT_ID!;
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
   return new checkoutNodeJssdk.core.SandboxEnvironment(clientId, clientSecret);
-}
+};
 
-function client() {
+const client = () => {
   return new checkoutNodeJssdk.core.PayPalHttpClient(environment());
-}
+};
 
-exports.processWithPayPal = async (amount, currency) => {
+export const processWithPayPal = async (
+  amount: string,
+  currency: string,
+  creditCard: CreditCard
+) => {
   const request = new checkoutNodeJssdk.orders.OrdersCreateRequest();
   request.prefer("return=representation");
   request.requestBody({
@@ -33,7 +38,7 @@ exports.processWithPayPal = async (amount, currency) => {
       transactionId: response.result.id,
       redirectUrl: response.result.links[1].href,
     };
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return { success: false, error: err.message };
   }

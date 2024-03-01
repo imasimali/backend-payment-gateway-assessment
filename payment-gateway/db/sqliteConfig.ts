@@ -1,5 +1,4 @@
-const sqlite3 = require("sqlite3").verbose();
-const { promisify } = require("util");
+import sqlite3 from "sqlite3";
 
 const db = new sqlite3.Database("./mydb.sqlite3", (err) => {
   if (err) {
@@ -16,12 +15,20 @@ const db = new sqlite3.Database("./mydb.sqlite3", (err) => {
       transaction_id TEXT,
       success BOOLEAN NOT NULL,
       message TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP  
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
   }
 });
 
-// Convert db.run to support Promises
-const dbRun = promisify(db.run.bind(db));
+const dbRun = (sql: string, params: any[]): Promise<void> =>
+  new Promise<void>((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 
-module.exports = { db, dbRun };
+export { db, dbRun };
