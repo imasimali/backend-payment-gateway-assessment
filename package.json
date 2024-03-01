@@ -2,7 +2,7 @@
   "name": "backend-payment-gateway-assessment",
   "version": "1.0.0",
   "description": "Node.js payment gateway library assessment",
-  "main": "payment-gateway/app.js",
+  "main": "payment-gateway/app.ts",
   "scripts": {
     "start": "ts-node payment-gateway/app.ts",
     "build": "tsc",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/imasimali/backend-payment-gateway-assessment.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/imasimali/backend-payment-gateway-assessment/issues"
   },
