@@ -19,11 +19,19 @@ interface PaymentData {
   customerName: string;
 }
 
+interface PaymentResponse {
+  success: boolean;
+  transactionId?: string;
+  redirectUrl?: string;
+  error?: string;
+  message?: string;
+}
+
 export const processPayment = async (paymentData: PaymentData) => {
   const { amount, currency, creditCard, customerName } = paymentData;
   const { number } = creditCard;
 
-  let paymentResponse: any;
+  let paymentResponse: PaymentResponse;
   let paymentGatewayUsed: string;
 
   // Determine card type based on the number; assuming AMEX if starts with 34 or 37
@@ -45,16 +53,18 @@ export const processPayment = async (paymentData: PaymentData) => {
     paymentGatewayUsed = "Braintree";
   }
 
-  const dbData = {
-    customerName,
-    amount,
-    currency,
-    creditCardNumber: number.slice(-4), // Storing only the last 4 digits for privacy
-    paymentGateway: paymentGatewayUsed,
-    ...paymentResponse,
-  };
+  if (paymentResponse.success) {
+    const dbData = {
+      customerName,
+      amount,
+      currency,
+      creditCardNumber: number.slice(-4), // Storing only the last 4 digits for privacy
+      paymentGateway: paymentGatewayUsed,
+      ...paymentResponse,
+    };
 
-  await savePaymentToDb(dbData);
+    await savePaymentToDb(dbData);
+  }
 
   return paymentResponse;
 };

@@ -5,7 +5,6 @@
   "main": "payment-gateway/app.ts",
   "scripts": {
     "start": "ts-node payment-gateway/app.ts",
-    "build": "tsc",
     "test": "jest"
   },
   "repository": {
