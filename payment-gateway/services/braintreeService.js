@@ -11,7 +11,7 @@ const gateway = new braintree.BraintreeGateway({
 exports.processWithBraintree = async (amount, currency, creditCard) => {
   try {
     const result = await gateway.transaction.sale({
-      amount: amount,
+      amount,
       creditCard,
     });
 

@@ -30,7 +30,7 @@ exports.processWithPayPal = async (amount, currency) => {
     console.log("Order ID:", response.result.id);
     return {
       success: true,
-      orderId: response.result.id,
+      transactionId: response.result.id,
       redirectUrl: response.result.links[1].href,
     };
   } catch (err) {

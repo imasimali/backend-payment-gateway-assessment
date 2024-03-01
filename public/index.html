@@ -8,6 +8,7 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
     <div class="container">
@@ -33,6 +34,16 @@
             <option>SGD</option>
             <option>AUD</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label for="customerFullName">Customer Full Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="customerFullName"
+            name="customerFullName"
+            required
+          />
         </div>
         <h3>Payment Information</h3>
         <div class="form-group">
@@ -80,11 +91,51 @@
       <div id="paymentResult"></div>
     </div>
 
+    <!-- PayPal Redirect Modal -->
+    <div
+      class="modal fade"
+      id="paypalRedirectModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="modalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Complete Your Payment</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Please <a href="#" id="paypalLink" target="_blank">click here</a> to
+            complete your PayPal payment.
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       $(document).ready(function () {
         $("#paymentForm").submit(function (e) {
           e.preventDefault();
           const formData = {
+            customerName: $("#customerFullName").val(),
             amount: parseFloat($("#amount").val()),
             currency: $("#currency").val(),
             creditCard: {
@@ -103,10 +154,11 @@
             success: function (response) {
               if (
                 response.success &&
-                response.orderId &&
+                response.transactionId &&
                 response.redirectUrl
               ) {
-                window.location.href = response.redirectUrl;
+                $("#paypalLink").attr("href", response.redirectUrl);
+                $("#paypalRedirectModal").modal("show");
               } else {
                 $("#paymentResult").html(
                   '<p class="text-success">Payment Successful!</p>'
